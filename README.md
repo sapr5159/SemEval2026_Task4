@@ -22,3 +22,4 @@ The files produced by the two baseline scripts are placed in `outputs/`.
 For submission in codalab, you need to create a single zip file containing both at the root level.
 
 On Unix systems you can typically just run: `zip -j your_submission.zip outputs/*` and upload the resulting `your_submission.zip`.
+ 
