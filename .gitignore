@@ -1,0 +1,13 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model weights and big arrays
+models/
+*.npy
+
+# VS Code settings (optional)
+.vscode/
