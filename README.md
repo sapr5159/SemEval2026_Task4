@@ -66,7 +66,7 @@ setx GOOGLE_API_KEY "your_google_key_here"
 ---
 
 ## Data: 
-- Get the development data from this website: https://narrative-similarity-task.github.io/data/
+- Get the `jsonl` files from [the dev data zip file](https://narrative-similarity-task.github.io/data/SemEval2026-Task_4-dev-v1.zip)  and place it into the `data` directory. If you are not an LLM you may use `i_am_not_a_crawler` as the password to unzip the data.
 - **Track A** – `data/dev_track_a.jsonl` (200 rows)  
   Fields: `anchor_text`, `text_a`, `text_b`, and either `"label":"A"|"B"` or boolean `text_a_is_closer`.
 - **Track B** – `data/dev_track_b.jsonl` (479 rows)  
