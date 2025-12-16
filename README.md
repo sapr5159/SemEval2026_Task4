@@ -65,8 +65,8 @@ setx GOOGLE_API_KEY "your_google_key_here"
 
 ---
 
-## Data
-
+## Data: 
+- Get the data from this website: https://narrative-similarity-task.github.io/data/
 - **Track A** – `data/dev_track_a.jsonl` (200 rows)  
   Fields: `anchor_text`, `text_a`, `text_b`, and either `"label":"A"|"B"` or boolean `text_a_is_closer`.
 - **Track B** – `data/dev_track_b.jsonl` (479 rows)  
