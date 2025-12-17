@@ -121,7 +121,7 @@ python track_b_final_boost.py `
 *(Dev‑only)* add **+100** synthetic triplets for analysis:
 ```powershell
 ##Prepare dataset with the required synthetic data. Ex:100
-python data/make_balanced_subset.py data/synth_track_a.jsonl data/dev_track_a.jsonl --k 100 --seed 42
+python data/make_balanced_subset.py --infile .\data\synthetic_data_for_classification.jsonl --devData  data/dev_track_a.jsonl --k 100 --seed 42
 ##Run the model to get results with synthetic data 
 python track_b_final_boost.py `
   --devA data/dev_track_a.jsonl --devB data/dev_track_b.jsonl `
