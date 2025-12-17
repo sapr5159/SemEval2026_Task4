@@ -150,7 +150,7 @@ def eval_precomputed(devA:str, devB:str, emb:str, ids:str, abtt_k:int):
 
 def main():
     ap = argparse.ArgumentParser(description="Boost Track-B cosine with ABTT + aspect fusion")
-    ap.add_argument("--mode", choices=["pre","re"], default="re", help="pre=use saved Track-B vectors; re=re-embed with fusion")
+    ap.add_argument("--reembed-all", action="store_true", help="Ignore precomputed embeddings; re-embed anchor/A/B with improved settings")
     ap.add_argument("--devA", default="data/dev_track_a.jsonl")
     ap.add_argument("--devB", default="data/dev_track_b.jsonl")
     ap.add_argument("--emb",  default="outputs/track_b.npy")
@@ -162,13 +162,17 @@ def main():
     ap.add_argument("--w-raw",  type=float, default=0.5)
     ap.add_argument("--w-verb", type=float, default=0.25)
     ap.add_argument("--w-end",  type=float, default=0.25)
+    ap.add_argument("--add-synthetic", default=0, type=int, help="number of synthetic rows to add to devA for analysis")
     args = ap.parse_args()
 
-    if args.mode=="pre":
-        eval_precomputed(args.devA, args.devB, args.emb, args.ids, args.abtt_k)
-    else:
+    if args.add_synthetic>0:
+        args.devA = f"data/dev_track_a_plus_{args.add_synthetic}.json"
+        print(f"Note: devA overridden to {args.devA} to include +{args.add_synthetic} synthetic rows", args.devA)
+    if args.reembed_all:
         eval_reembed(args.devA, args.model, args.prefix, args.batch, args.abtt_k,
                      args.w_raw, args.w_verb, args.w_end)
+    else:
+        eval_precomputed(args.devA, args.devB, args.emb, args.ids, args.abtt_k)
 
 if __name__=="__main__":
     main()

@@ -9,9 +9,9 @@ Primary focus: **Track B** (one vector per story, cosine decision). We also prov
 ## Results
 | Track | Model / Extras                      | Dataset                  | Acc. |
 |:----:|-------------------------------------|--------------------------|:---:|
-| B    | BGE (base)                           | 200 dev                  | 0.640 |
+| B    | BGE (base)                           | 200 dev                  | 0.595 |
 | B    | E5 (base)                            | 200 dev                  | 0.650 |
-| B    | GTE (base)                           | 200 dev                  | 0.595 |
+| B    | GTE (base)                           | 200 dev                  | 0.640 |
 | B    | **E5‑Large + Fusion + ABTT**         | **200 dev**              | **0.660** |
 | B    | E5‑Large + Fusion + ABTT (+100 synth)| 200 dev + **100 synth*** | 0.770 |
 | A    | Llama‑3.1‑8B‑Instant                  | 200 dev                  | 0.605 |
@@ -67,6 +67,7 @@ setx GOOGLE_API_KEY "your_google_key_here"
 
 ## Data: 
 - Get the `jsonl` files from [the dev data zip file](https://narrative-similarity-task.github.io/data/SemEval2026-Task_4-dev-v1.zip)  and place it into the `data` directory. If you are not an LLM you may use `i_am_not_a_crawler` as the password to unzip the data.
+- Get the synthetic data from [the synth data json file](https://narrative-similarity-task.github.io/data/synthetic_data_for_classification.jsonl) and place it into the `data` directory.
 - **Track A** – `data/dev_track_a.jsonl` (200 rows)  
   Fields: `anchor_text`, `text_a`, `text_b`, and either `"label":"A"|"B"` or boolean `text_a_is_closer`.
 - **Track B** – `data/dev_track_b.jsonl` (479 rows)  
@@ -105,7 +106,7 @@ python track_b_final.py `
 # E5
 python track_b_final.py `
   --devA data/dev_track_a.jsonl --devB data/dev_track_b.jsonl `
-  --model intfloat/e5-large-v2 --prefix e5 `
+  --model intfloat/e5-large-v2 `
   --chunk-chars 1200 --chunk-overlap 200 --batch 32 --reembed-all
 ```
 
@@ -113,14 +114,19 @@ python track_b_final.py `
 ```powershell
 python track_b_final_boost.py `
   --devA data/dev_track_a.jsonl --devB data/dev_track_b.jsonl `
-  --model intfloat/e5-large-v2 --prefix e5 `
-  --chunk-chars 1200 --chunk-overlap 200 --batch 32 `
-  --fusion-weights 0.5 0.25 0.25 --abtt-k 1 --reembed-all
+  --model intfloat/e5-large-v2 --batch 32 `
+  --abtt-k 1 --reembed-all
 ```
 
 *(Dev‑only)* add **+100** synthetic triplets for analysis:
 ```powershell
-python track_b_final_boost.py ... --add-synthetic 100
+##Prepare dataset with the required synthetic data. Ex:100
+python data/make_balanced_subset.py data/synth_track_a.jsonl data/dev_track_a.jsonl --k 100 --seed 42
+##Run the model to get results with synthetic data 
+python track_b_final_boost.py `
+  --devA data/dev_track_a.jsonl --devB data/dev_track_b.jsonl `
+  --model intfloat/e5-large-v2 --batch 32 `
+  --abtt-k 1 --reembed-all --add-synthetic 100
 ```
 
 Expected: `used=200, accuracy≈0.660` (and ≈0.770 for 200+100 synth; keep synth **out** of official 200).
@@ -131,12 +137,12 @@ Expected: `used=200, accuracy≈0.660` (and ≈0.770 for 200+100 synth; keep syn
 
 ```powershell
 # larger model (higher accuracy)
-python track_a_groq.py --devA data/dev_track_a.jsonl ^
-  --model llama-3.3-70b-versatile --temperature 0.0
+python track_a_groq.py --infile data/dev_track_a.jsonl `
+  --model llama-3.3-70b-versatile
 
 # faster model
-python track_a_groq.py --devA data/dev_track_a.jsonl ^
-  --model llama-3.1-8b-instant --temperature 0.0
+python track_a_groq.py --infile data/dev_track_a.jsonl `
+  --model llama-3.1-8b-instant
 ```
 
 **Prompt template (system/user):**

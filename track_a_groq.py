@@ -156,7 +156,7 @@ def main():
     ap.add_argument("--submission", default="output/track_a.jsonl", help="Minimal submission JSONL")
     ap.add_argument("--method", choices=["embeddings","llm"], default=os.environ.get("TASKA_METHOD","llm"))
     ap.add_argument("--emb-model", default=os.environ.get("GROQ_EMB_MODEL","nomic-embed-text-v1.5"))
-    ap.add_argument("--llm-model", default=os.environ.get("GROQ_LLM_MODEL","llama-3.1-8b-instant"))
+    ap.add_argument("--model", default=os.environ.get("GROQ_model","llama-3.1-8b-instant"))
     args = ap.parse_args()
 
     client = get_client()
@@ -178,7 +178,7 @@ def main():
         if args.method == "embeddings":
             out = predict_with_embeddings(client, anchor, A, B, args.emb_model)
         else:
-            out = predict_with_llm(client, anchor, A, B, args.llm_model)
+            out = predict_with_llm(client, anchor, A, B, args.model)
 
         preds.append({
             "id": count,
